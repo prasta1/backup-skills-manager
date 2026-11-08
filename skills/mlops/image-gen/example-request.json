@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "model_id": "macbook:unsloth:qwen-image-2.1-uncensored",
+  "prompt": "a glossy red cube floating above a mirror plane, studio lighting, product shot",
+  "negative_prompt": "blurry, low quality",
+  "settings": {
+    "width": 1024,
+    "height": 1024,
+    "steps": 25,
+    "seed": null,
+    "n": 1
+  },
+  "output": {
+    "dir": "~/Pictures/image-gen"
+  }
+}

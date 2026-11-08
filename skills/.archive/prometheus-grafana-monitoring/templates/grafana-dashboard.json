@@ -1,0 +1,314 @@
+{
+  "dashboard": {
+    "annotations": {
+      "list": []
+    },
+    "editable": true,
+    "graphTooltip": 1,
+    "id": null,
+    "panels": [
+      {
+        "title": "GPU Frequency (MHz)",
+        "type": "timeseries",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "afxkzhsh501dsa"
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 8,
+          "x": 0,
+          "y": 0
+        },
+        "targets": [
+          {
+            "expr": "macmon_gpu_freq_mhz{job=\"studio\"}",
+            "legendFormat": "Studio"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "decmhz"
+          },
+          "overrides": []
+        },
+        "id": 1
+      },
+      {
+        "title": "GPU Active Ratio",
+        "type": "timeseries",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "afxkzhsh501dsa"
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 8,
+          "x": 8,
+          "y": 0
+        },
+        "targets": [
+          {
+            "expr": "macmon_gpu_active_ratio{job=\"studio\"}",
+            "legendFormat": "Studio"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percentunit",
+            "min": 0,
+            "max": 1
+          },
+          "overrides": []
+        },
+        "id": 2
+      },
+      {
+        "title": "GPU Power (W)",
+        "type": "timeseries",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "afxkzhsh501dsa"
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 8,
+          "x": 16,
+          "y": 0
+        },
+        "targets": [
+          {
+            "expr": "macmon_gpu_power_watts{job=\"studio\"}",
+            "legendFormat": "Studio"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "watt"
+          },
+          "overrides": []
+        },
+        "id": 3
+      },
+      {
+        "title": "CPU Frequency (MHz)",
+        "type": "timeseries",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "afxkzhsh501dsa"
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 8,
+          "x": 0,
+          "y": 7
+        },
+        "targets": [
+          {
+            "expr": "macmon_pcpu_freq_mhz{job=\"studio\"}",
+            "legendFormat": "Studio P"
+          },
+          {
+            "expr": "macmon_ecpu_freq_mhz{job=\"studio\"}",
+            "legendFormat": "Studio E"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "decmhz"
+          },
+          "overrides": []
+        },
+        "id": 4
+      },
+      {
+        "title": "CPU Active Ratio",
+        "type": "timeseries",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "afxkzhsh501dsa"
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 8,
+          "x": 8,
+          "y": 7
+        },
+        "targets": [
+          {
+            "expr": "macmon_cpu_active_ratio{job=\"studio\"}",
+            "legendFormat": "Studio"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percentunit",
+            "min": 0,
+            "max": 1
+          },
+          "overrides": []
+        },
+        "id": 5
+      },
+      {
+        "title": "Package Power (W)",
+        "type": "timeseries",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "afxkzhsh501dsa"
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 8,
+          "x": 16,
+          "y": 7
+        },
+        "targets": [
+          {
+            "expr": "macmon_sys_power_watts{job=\"studio\"}",
+            "legendFormat": "Studio"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "watt"
+          },
+          "overrides": []
+        },
+        "id": 6
+      },
+      {
+        "title": "Temperature (C)",
+        "type": "timeseries",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "afxkzhsh501dsa"
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 8,
+          "x": 0,
+          "y": 14
+        },
+        "targets": [
+          {
+            "expr": "macmon_cpu_temp_celsius{job=\"studio\"}",
+            "legendFormat": "Studio CPU"
+          },
+          {
+            "expr": "macmon_gpu_temp_celsius{job=\"studio\"}",
+            "legendFormat": "Studio GPU"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "celsius"
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Studio CPU"
+              },
+              "properties": [
+                {
+                  "id": "custom.thresholds",
+                  "value": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 80
+                    },
+                    {
+                      "color": "red",
+                      "value": 95
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "id": 7
+      },
+      {
+        "title": "Memory Used (GB)",
+        "type": "timeseries",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "afxkzhsh501dsa"
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 8,
+          "x": 8,
+          "y": 14
+        },
+        "targets": [
+          {
+            "expr": "macmon_memory_ram_used_bytes{job=\"studio\"} / 1073741824",
+            "legendFormat": "Studio RAM"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "decmbytes",
+            "min": 0
+          },
+          "overrides": []
+        },
+        "id": 8
+      },
+      {
+        "title": "Fan Speed (RPM)",
+        "type": "timeseries",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "afxkzhsh501dsa"
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 8,
+          "x": 16,
+          "y": 14
+        },
+        "targets": [
+          {
+            "expr": "macmon_fan_speed_rpm{job=\"studio\"}",
+            "legendFormat": "Studio"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "rpm"
+          },
+          "overrides": []
+        },
+        "id": 9
+      }
+    ],
+    "refresh": "15s",
+    "schemaVersion": 39,
+    "tags": [
+      "macmon",
+      "system"
+    ],
+    "templating": {
+      "list": []
+    },
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "browser",
+    "title": "System Monitoring",
+    "uid": "macmon-system",
+    "version": 1
+  },
+  "folderUid": "",
+  "overwrite": true
+}

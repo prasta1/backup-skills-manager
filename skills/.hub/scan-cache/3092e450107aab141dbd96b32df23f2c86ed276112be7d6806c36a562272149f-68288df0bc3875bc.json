@@ -1,0 +1,25 @@
+{
+  "source": "official",
+  "source_url": "official/autonomous-ai-agents/honcho",
+  "bundle_hash": "sha256:3092e450107aab141dbd96b32df23f2c86ed276112be7d6806c36a562272149f",
+  "scanner_version": "skills-guard-v1",
+  "verdict": "dangerous",
+  "trust_level": "builtin",
+  "findings": [
+    {
+      "pattern_id": "hermes_config_mod",
+      "severity": "critical",
+      "category": "persistence",
+      "file": "SKILL.md",
+      "line": 392,
+      "match": "Run `hermes honcho setup`. Ensure `memory.provider: honcho` is in `~/.hermes/config.yaml`.",
+      "description": "references Hermes configuration files directly"
+    }
+  ],
+  "rules": [
+    "hermes_config_mod"
+  ],
+  "scanned_at": "2026-07-18T13:49:18.964293+00:00",
+  "summary": "honcho: dangerous \u2014 1 finding(s) in persistence",
+  "fresh": true
+}

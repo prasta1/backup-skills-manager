@@ -1,0 +1,53 @@
+{
+  "source": "official",
+  "source_url": "official/creative/pixel-art",
+  "bundle_hash": "sha256:37cb6e0295ed909f064f1ef98d9c0fb54029ea47dd04744ef511259a189444a6",
+  "scanner_version": "skills-guard-v1",
+  "verdict": "safe",
+  "trust_level": "builtin",
+  "findings": [
+    {
+      "pattern_id": "python_subprocess",
+      "severity": "medium",
+      "category": "execution",
+      "file": "ATTRIBUTION.md",
+      "line": 31,
+      "match": "- `ffmpeg` invocation switched from `os.system` to `subprocess.run(check=True)`",
+      "description": "Python subprocess execution"
+    },
+    {
+      "pattern_id": "unpinned_pip_install",
+      "severity": "medium",
+      "category": "supply_chain",
+      "file": "SKILL.md",
+      "line": 192,
+      "match": "- Pillow (`pip install Pillow`)",
+      "description": "pip install without version pinning"
+    },
+    {
+      "pattern_id": "python_subprocess",
+      "severity": "medium",
+      "category": "execution",
+      "file": "scripts/pixel_art_video.py",
+      "line": 297,
+      "match": "subprocess.run(",
+      "description": "Python subprocess execution"
+    },
+    {
+      "pattern_id": "python_subprocess",
+      "severity": "medium",
+      "category": "execution",
+      "file": "scripts/pixel_art_video.py",
+      "line": 309,
+      "match": "subprocess.run(",
+      "description": "Python subprocess execution"
+    }
+  ],
+  "rules": [
+    "python_subprocess",
+    "unpinned_pip_install"
+  ],
+  "scanned_at": "2026-08-10T15:13:30.246880+00:00",
+  "summary": "pixel-art: safe \u2014 4 finding(s) in execution, supply_chain",
+  "fresh": true
+}

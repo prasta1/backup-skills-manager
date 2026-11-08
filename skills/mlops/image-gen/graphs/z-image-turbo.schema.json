@@ -1,0 +1,44 @@
+{
+  "parameters": {
+    "clip_name": {
+      "node_id": "30",
+      "field": "clip_name",
+      "type": "string"
+    },
+    "vae_name": {
+      "node_id": "29",
+      "field": "vae_name",
+      "type": "string"
+    },
+    "unet_name": {
+      "node_id": "28",
+      "field": "unet_name",
+      "type": "string"
+    },
+    "text": {
+      "node_id": "27",
+      "field": "text",
+      "type": "string"
+    },
+    "width": {
+      "node_id": "13",
+      "field": "width",
+      "type": "string"
+    },
+    "height": {
+      "node_id": "13",
+      "field": "height",
+      "type": "string"
+    },
+    "seed": {
+      "node_id": "3",
+      "field": "seed",
+      "type": "string"
+    },
+    "steps": {
+      "node_id": "3",
+      "field": "steps",
+      "type": "string"
+    }
+  }
+}

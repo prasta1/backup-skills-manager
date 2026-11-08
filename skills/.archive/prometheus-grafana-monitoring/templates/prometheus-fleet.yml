@@ -1,0 +1,50 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  # Studio (always-on Mac Studio M3 Ultra, primary inference + monitoring hub)
+  - job_name: "studio"
+    static_configs:
+      - targets: ["localhost:9199"]
+        labels:
+          host: "studio"
+
+  # node_exporter — Studio
+  - job_name: "node-studio"
+    static_configs:
+      - targets: ["localhost:9100"]
+        labels:
+          host: "studio"
+
+  # node_exporter — Synology NAS (tanker)
+  - job_name: "node-tanker"
+    static_configs:
+      - targets: ["100.102.22.38:9100"]
+        labels:
+          host: "tanker"
+
+  # blackbox_exporter — HTTP probes for local services
+  - job_name: "blackbox-http"
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+          - "http://localhost:3001"      # Grafana
+          - "http://localhost:9090"      # Prometheus self
+          - "http://localhost:9100"      # node_exporter Studio
+          - "http://localhost:9115"      # blackbox self
+        labels:
+          host: "studio"
+      - targets:
+          - "http://100.102.22.38:9100"  # node_exporter tanker
+        labels:
+          host: "tanker"
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: localhost:9115

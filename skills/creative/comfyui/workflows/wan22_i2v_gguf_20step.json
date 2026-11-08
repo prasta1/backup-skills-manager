@@ -1,0 +1,125 @@
+{
+  "_comment": "REFERENCE (comparison) graph: Wan 2.2 i2v non-turbo path, matching the stock ComfyUI template's switch defaults (PrimitiveBoolean 131 = false). Parameters read out of video_wan2_2_14B_i2v.json's subgraph switch wiring, not guessed: Switch(Steps)->on_false = 20; Switch(CFG)->on_false = 3.5; Switch(Split Step)->on_false = 10; Switch(Model)->on_false = raw UNETLoader (no LoRA). Therefore: stage1 steps=20 cfg=3.5 start=0 end=10; stage2 steps=20 cfg=3.5 start=10 end=20. Same UNets/encoder/VAE as wan22_i2v_gguf.json (the 4-step LoRA/turbo path) so the two are a clean A/B.",
+  "1": {
+    "class_type": "UnetLoaderGGUF",
+    "_meta": { "title": "Wan 2.2 I2V High Noise UNet (no LoRA)" },
+    "inputs": { "unet_name": "wan2.2_i2v_high_noise_14B_Q5_K_M.gguf" }
+  },
+  "2": {
+    "class_type": "UnetLoaderGGUF",
+    "_meta": { "title": "Wan 2.2 I2V Low Noise UNet (no LoRA)" },
+    "inputs": { "unet_name": "wan2.2_i2v_low_noise_14B_Q5_K_M.gguf" }
+  },
+  "3": {
+    "class_type": "CLIPLoaderGGUF",
+    "_meta": { "title": "Wan Text Encoder (umt5)" },
+    "inputs": { "clip_name": "umt5-xxl-encoder-Q8_0.gguf", "type": "wan" }
+  },
+  "4": {
+    "class_type": "VAELoader",
+    "_meta": { "title": "Wan VAE (16-channel)" },
+    "inputs": { "vae_name": "wan_2.1_vae.safetensors" }
+  },
+  "5": {
+    "class_type": "ModelSamplingSD3",
+    "_meta": { "title": "High Noise Sampling" },
+    "inputs": { "model": ["1", 0], "shift": 5.0 }
+  },
+  "6": {
+    "class_type": "ModelSamplingSD3",
+    "_meta": { "title": "Low Noise Sampling" },
+    "inputs": { "model": ["2", 0], "shift": 5.0 }
+  },
+  "7": {
+    "class_type": "CLIPTextEncode",
+    "_meta": { "title": "Positive Prompt (identical to the 4-step run)" },
+    "inputs": {
+      "text": "PLACEHOLDER_POSITIVE",
+      "clip": ["3", 0]
+    }
+  },
+  "8": {
+    "class_type": "CLIPTextEncode",
+    "_meta": { "title": "Negative Prompt" },
+    "inputs": {
+      "text": "static, blurry, watermark, low quality, distorted, deformed, extra limbs, bad anatomy, jitter, warping, morphing, flicker",
+      "clip": ["3", 0]
+    }
+  },
+  "17": {
+    "class_type": "LoadImage",
+    "_meta": { "title": "Start Frame" },
+    "inputs": { "image": "i2v_test_still.png" }
+  },
+  "18": {
+    "class_type": "WanImageToVideo",
+    "_meta": { "title": "Image to Video (start frame -> latent)" },
+    "inputs": {
+      "positive": ["7", 0],
+      "negative": ["8", 0],
+      "vae": ["4", 0],
+      "start_image": ["17", 0],
+      "width": 640,
+      "height": 640,
+      "length": 33,
+      "batch_size": 1
+    }
+  },
+  "10": {
+    "class_type": "KSamplerAdvanced",
+    "_meta": { "title": "Stage 1 - High Noise (0..10 of 20)" },
+    "inputs": {
+      "model": ["5", 0],
+      "positive": ["18", 0],
+      "negative": ["18", 1],
+      "latent_image": ["18", 2],
+      "add_noise": "enable",
+      "noise_seed": 42,
+      "steps": 20,
+      "cfg": 3.5,
+      "sampler_name": "euler",
+      "scheduler": "simple",
+      "start_at_step": 0,
+      "end_at_step": 10,
+      "return_with_leftover_noise": "enable"
+    }
+  },
+  "11": {
+    "class_type": "KSamplerAdvanced",
+    "_meta": { "title": "Stage 2 - Low Noise (10..20 of 20)" },
+    "inputs": {
+      "model": ["6", 0],
+      "positive": ["18", 0],
+      "negative": ["18", 1],
+      "latent_image": ["10", 0],
+      "add_noise": "disable",
+      "noise_seed": 42,
+      "steps": 20,
+      "cfg": 3.5,
+      "sampler_name": "euler",
+      "scheduler": "simple",
+      "start_at_step": 10,
+      "end_at_step": 20,
+      "return_with_leftover_noise": "disable"
+    }
+  },
+  "12": {
+    "class_type": "VAEDecode",
+    "_meta": { "title": "VAE Decode" },
+    "inputs": { "samples": ["11", 0], "vae": ["4", 0] }
+  },
+  "13": {
+    "class_type": "CreateVideo",
+    "_meta": { "title": "Create Video" },
+    "inputs": { "images": ["12", 0], "fps": 16.0 }
+  },
+  "14": {
+    "class_type": "SaveVideo",
+    "_meta": { "title": "Save Video" },
+    "inputs": {
+      "video": ["13", 0],
+      "filename_prefix": "wan_i2v_20step",
+      "format": "mp4"
+    }
+  }
+}

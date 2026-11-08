@@ -1,0 +1,310 @@
+#!/usr/bin/env python3
+"""
+Email Triage Agent — scan Gmail inbox, classify threads, draft replies, stage for approval.
+
+Usage:
+    triage.py run       — scan + classify + draft + stage
+    triage.py review    — list pending drafts
+    triage.py send      — send approved drafts (requires send-gate approval)
+    triage.py test-model — verify the local model is reachable
+
+Uses Himalaya v2 (Homebrew) for IMAP access, Devstral local model for classification/drafting.
+
+Absorbed from: email-triage-agent
+"""
+import json
+import os
+import re
+import sys
+import subprocess
+from datetime import datetime, timezone
+from pathlib import Path
+
+# ── Config ──
+DRAFT_DIR = Path(os.environ.get("EMAIL_DRAFT_DIR", "~/.hermes/email-drafts")).expanduser()
+MODEL = os.environ.get("EMAIL_TRIAGE_MODEL", "ms-devstral-24b")
+LIMIT = int(os.environ.get("EMAIL_TRIAGE_LIMIT", "20"))
+ACCOUNT = "gmail"
+LLAMA_SWAP_URL = "http://127.0.0.1:9292/v1/chat/completions"
+
+# Use Homebrew himalaya (v2.1.0), not the broken nix one
+HIMALAYA_BIN = "/opt/homebrew/bin/himalaya"
+
+DRAFT_DIR.mkdir(parents=True, exist_ok=True)
+SENT_LOG = DRAFT_DIR / "sent.log"
+INDEX_FILE = DRAFT_DIR / "drafts.json"
+
+def himalaya_json(args, timeout_s=60):
+    """Run himalaya CLI with --json output. Returns parsed JSON."""
+    env = dict(os.environ)
+    result = subprocess.run(
+        [HIMALAYA_BIN, "--json", *args],
+        capture_output=True, text=True, env=env, timeout=timeout_s
+    )
+    if result.returncode != 0:
+        raise RuntimeError(f"Himalaya error: {result.stderr or result.stdout}")
+    return json.loads(result.stdout)
+
+def himalaya_text(args, timeout_s=60):
+    """Run himalaya CLI without JSON output."""
+    env = dict(os.environ)
+    result = subprocess.run(
+        [HIMALAYA_BIN, *args],
+        capture_output=True, text=True, env=env, timeout=timeout_s
+    )
+    if result.returncode != 0:
+        raise RuntimeError(f"Himalaya error: {result.stderr or result.stdout}")
+    return result.stdout
+
+def llm_request(prompt, max_tokens=2048, temp=0.7):
+    """Call the local model via llama-swap."""
+    payload = {
+        "model": MODEL,
+        "messages": [{"role": "user", "content": prompt}],
+        "max_tokens": max_tokens,
+        "temperature": temp,
+    }
+    result = subprocess.run(
+        ["curl", "-s", "--max-time", "120", "-X", "POST",
+         LLAMA_SWAP_URL, "-H", "Content-Type: application/json",
+         "-d", json.dumps(payload)],
+        capture_output=True, text=True, timeout=130
+    )
+    if result.returncode != 0 or not result.stdout:
+        raise RuntimeError(f"LLM call failed: {result.stderr}")
+    data = json.loads(result.stdout)
+    return data["choices"][0]["message"]["content"].strip()
+
+PROCESSED_FILE = DRAFT_DIR / ".processed_ids"
+
+def load_processed_ids():
+    if PROCESSED_FILE.exists():
+        return set(PROCESSED_FILE.read_text().strip().splitlines())
+    return set()
+
+def save_processed_ids(ids):
+    PROCESSED_FILE.write_text("\n".join(sorted(ids)) + "\n")
+
+def fetch_new_envelopes():
+    """Get recent email envelopes from Gmail INBOX, skipping already-processed ones."""
+    print("📥 Fetching recent envelopes from Gmail...")
+    data = himalaya_json([
+        "envelope", "list", "-a", ACCOUNT,
+        "--page-size", str(LIMIT * 3)
+    ], timeout_s=60)
+    if isinstance(data, dict) and "envelopes" in data:
+        envelopes = data["envelopes"]
+    elif isinstance(data, dict) and "data" in data:
+        envelopes = data["data"]
+    elif isinstance(data, list):
+        envelopes = data
+    else:
+        envelopes = []
+    processed = load_processed_ids()
+    def is_unseen(env):
+        flags = env.get("flags", [])
+        for f in flags:
+            if isinstance(f, dict):
+                raw = f.get("raw", "").lower()
+                if "unseen" in raw:
+                    return True
+            elif isinstance(f, str) and "unseen" in f.lower():
+                return True
+        return False
+    unseen = [e for e in envelopes if is_unseen(e)]
+    if len(unseen) < len(envelopes):
+        noflag = [e for e in envelopes if is_unseen(e) or not e.get("flags")]
+        print(f"  Found {len(envelopes)} envelopes — {len(unseen)} unseen, {len(noflag)} without \\Seen flag")
+        candidates = noflag
+    else:
+        print(f"  Found {len(unseen)} unseen envelopes out of {len(envelopes)} total")
+        candidates = unseen
+    new = [e for e in candidates if e.get("id") not in processed]
+    print(f"  New (unprocessed): {len(new)} — skipping {len(candidates) - len(new)} already processed")
+    return new[:LIMIT]
+
+def fetch_message_body(message_id):
+    """Fetch full message body by envelope ID."""
+    try:
+        return himalaya_text(["message", "read", "-a", ACCOUNT, message_id], timeout_s=60)
+    except Exception as e:
+        return f"[Could not fetch full message: {e}]"
+
+def classify_and_draft(envelope):
+    """Use local LLM to classify + draft reply."""
+    msg_id = envelope.get("id", "")
+    subject = envelope.get("subject", "(no subject)")
+    from_list = envelope.get("from", [])
+    if isinstance(from_list, list) and from_list:
+        from_obj = from_list[0]
+        if isinstance(from_obj, dict):
+            from_name = from_obj.get("name", "") or ""
+            from_email = from_obj.get("email", "") or ""
+        else:
+            from_name = str(from_list)
+            from_email = ""
+    else:
+        from_name = str(from_list)
+        from_email = ""
+    date_str = envelope.get("date", "")
+    sender_display = f"{from_name} <{from_email}>" if from_email else from_name
+    body_text = fetch_message_body(msg_id)
+    if len(body_text) > 8000:
+        body_text = body_text[:8000] + "\n...[truncated]"
+    prompt = f"""You are an email triage assistant working for Patrick. Analyze the following email and return ONLY valid JSON.
+
+Email:
+---
+From: {sender_display}
+Subject: {subject}
+Date: {date_str}
+
+{body_text}
+---
+
+{{"classification": "reply", "confidence": 0.92, "reply_to": "{from_email}", "reply_subject": "Re: {subject}", "reply_body": "Concise reply in Patrick's voice.", "reasoning": "Brief explanation of classification."}}
+
+Classification options: urgent-reply, reply, action, waiting, reference, noise.
+- newsletters/promotions/automated → noise
+- job alerts, LinkedIn, shopping → noise or reference
+- personal/important senders → reply or urgent-reply
+- Never fabricate sender email — use the one above
+- reply_subject = "Re: " + original subject
+If not reply-worthy, set reply_body to empty string. Return ONLY JSON."""
+    print(f"  ⏳ Classifying: {subject[:60]}...")
+    try:
+        raw = llm_request(prompt, max_tokens=2048, temp=0.3)
+        first_brace = raw.find("{")
+        last_brace = raw.rfind("}")
+        if first_brace >= 0 and last_brace > first_brace:
+            clean = raw[first_brace:last_brace + 1]
+        else:
+            clean = raw
+        data = json.loads(clean)
+        return data
+    except Exception as e:
+        print(f"  ❌ LLM error on {msg_id}: {e}")
+        return {
+            "classification": "reference",
+            "confidence": 0.0,
+            "reply_to": from_email,
+            "reply_subject": f"Re: {subject}",
+            "reply_body": "",
+            "reasoning": f"LLM error: {e}",
+        }
+
+def save_draft(envelope, result):
+    msg_id = envelope.get("id", "unknown")
+    now = datetime.now(timezone.utc).isoformat()
+    draft = {
+        "id": msg_id,
+        "classification": result.get("classification", "reference"),
+        "confidence": result.get("confidence", 0.0),
+        "sender": json.dumps(envelope.get("from", [])),
+        "subject": envelope.get("subject", ""),
+        "date": envelope.get("date", ""),
+        "reply_to": result.get("reply_to", ""),
+        "reply_subject": result.get("reply_subject", ""),
+        "reply_body": result.get("reply_body", ""),
+        "reasoning": result.get("reasoning", ""),
+        "draft_created_at": now,
+        "approved": False,
+    }
+    filename = DRAFT_DIR / f"draft_{msg_id}_{int(datetime.now().timestamp())}.toml"
+    with open(filename, "w") as f:
+        f.write(f'# Staged email draft — not yet approved for sending\n')
+        f.write(f'# Created: {now}\n')
+        f.write(f'# Classification: {draft["classification"]} ({draft["confidence"] * 100:.0f}% confident)\n')
+        f.write(f'# Reason: {draft["reasoning"]}\n\n')
+        f.write(f'id = "{draft["id"]}"\n')
+        f.write(f'classification = "{draft["classification"]}"\n')
+        f.write(f'classification_confidence = {draft["confidence"]}\n')
+        f.write(f'sender = {draft["sender"]}\n')
+        f.write(f'subject = "{draft["subject"]}"\n')
+        f.write(f'date = "{draft["date"]}"\n')
+        f.write(f'draft_to = "{draft["reply_to"]}"\n')
+        f.write(f'draft_subject = "{draft["reply_subject"]}"\n')
+        f.write(f'draft_body = """\n{draft["reply_body"]}\n"""\n')
+        f.write(f'draft_created_at = "{draft["draft_created_at"]}"\n')
+        f.write(f'approved = false\n')
+    print(f"  📝 Staged: {draft['classification']} | {draft['subject'][:50]}")
+    return filename
+
+def cmd_run():
+    envelopes = fetch_new_envelopes()
+    if not envelopes:
+        print("📭 No new emails to triage.")
+        return
+    results = []
+    processed_ids = set()
+    for env in envelopes:
+        result = classify_and_draft(env)
+        draft_file = save_draft(env, result)
+        processed_ids.add(env.get("id"))
+        results.append({
+            "envelope_id": env.get("id"),
+            "subject": env.get("subject", ""),
+            "classification": result["classification"],
+            "has_reply": bool(result.get("reply_body", "")),
+        })
+    save_processed_ids(processed_ids)
+    print(f"\n📊 Summary: {len(results)} threads processed")
+
+def cmd_review():
+    drafts = sorted(DRAFT_DIR.glob("draft_*.toml"))
+    for f in drafts:
+        content = f.read_text()
+        approved = "approved = true" in content
+        status = "✅ APPROVED" if approved else "⏳ PENDING"
+        print(f"  [{status}] {f.name}")
+
+def cmd_send():
+    drafts = sorted(DRAFT_DIR.glob("draft_*.toml"))
+    sent = 0
+    for f in drafts:
+        content = f.read_text()
+        if "approved = true" not in content:
+            continue
+        # Parse TOML fields
+        body_match = re.search(r'draft_body = """\n(.*)\n"""', content, re.DOTALL)
+        to_match = re.search(r'draft_to = "(.*)"', content)
+        subj_match = re.search(r'draft_subject = "(.*)"', content)
+        if body_match and to_match and subj_match:
+            try:
+                result = subprocess.run(
+                    ["/opt/homebrew/bin/himalaya", "message", "send", "-a", "gmail",
+                     "--to", to_match.group(1),
+                     "--subject", subj_match.group(1)],
+                    input=body_match.group(1), capture_output=True, text=True, timeout=30
+                )
+                if result.returncode == 0:
+                    f.unlink()
+                    sent += 1
+            except Exception:
+                pass
+    print(f"📤 Sent: {sent}")
+
+def cmd_test_model():
+    print(f"Testing model: {MODEL}")
+    try:
+        result = llm_request("Reply with exactly: DEVSTRAL_EMAIL_TEST_OK", max_tokens=8, temp=0.1)
+        print(f"✅ Response: {result}")
+        return "DEVSTRAL_EMAIL_TEST_OK" in result
+    except Exception as e:
+        print(f"❌ Model test failed: {e}")
+        return False
+
+if __name__ == "__main__":
+    cmd = sys.argv[1] if len(sys.argv) > 1 else ""
+    if cmd == "run":
+        cmd_run()
+    elif cmd == "review":
+        cmd_review()
+    elif cmd == "send":
+        cmd_send()
+    elif cmd == "test-model":
+        ok = cmd_test_model()
+        sys.exit(0 if ok else 1)
+    else:
+        print("Usage: triage.py [run|review|send|test-model]")
+        sys.exit(1)

@@ -1,0 +1,71 @@
+{
+  "image": "scripts/test_image_user.png",
+  "source": "User-supplied photograph (upload_20260928_211452_1.png), 1320x1169",
+  "verified": true,
+  "note": "GROUND TRUTH. Verified by two INDEPENDENT vision reads that disagreed on four points — those disagreements are the discriminating questions below. If the image is replaced, re-verify and rewrite this file; the scorers are written against these specific facts.",
+
+  "people_clearly_visible": 1,
+  "people_note": "Exactly one person is clearly visible, and she is on the RIGHT side of the frame. A second dark vertical shape in the far background near the dark horse is genuinely ambiguous (person / tree trunk / shadow) and is NOT counted as a person.",
+
+  "colors": {
+    "red_top": 0,
+    "blue_top": 0,
+    "light_top": 1,
+    "top_actual": "pink/peach",
+    "top_note": "The top is pink/peach. It is NOT white and NOT red. Both independent reads agreed on pink/peach, and both flagged white-vs-pink as a known model failure mode. 'red' and 'blue' are the near-miss distractors: answering 1 for either is wrong."
+  },
+
+  "spatial": {
+    "person_side": "right",
+    "far_left_person_exists": false,
+    "spatial_note": "There is NO person on the far left. A model asked about 'the person on the left' must report that no such person exists. The horse is on the left; the person is on the right."
+  },
+
+  "setting": "farm",
+  "setting_words": ["farm", "ranch", "pasture", "equestrian", "stables", "barn", "country"],
+  "activity_words": ["posing", "taking a photo", "photograph", "posing for", "standing"],
+
+  "objects_present": {
+    "horse": ["horse", "pony", "colt", "mare"],
+    "fence": ["fence", "fencing", "rail fence", "paddock"],
+    "cat": ["cat", "kitten", "kitty"]
+  },
+
+  "objects_absent": {
+    "laptop": ["laptop", "computer", "notebook", "macbook", "monitor", "screen", "tablet"],
+    "bicycle": ["bicycle", "bike", "cyclist"],
+    "dog": ["dog", "puppy", "canine", "hound"],
+    "text_signage": ["sign", "signage", "banner", "caption", "watermark", "text overlay"]
+  },
+
+  "ambiguous": {
+    "background_structure": {
+      "question": "what is the white structure in the far background",
+      "acceptable": ["trailer", "rv", "camper", "shed", "outbuilding", "building", "tent", "cannot tell", "unclear", "not sure", "hard to tell", "ambiguous", "too far", "can't determine"],
+      "acceptable_note": "A trailer/shed/tent are all defensible readings. So is explicitly saying it cannot be determined. What is NOT acceptable is confidently asserting a specific object with no hedge AND also not the generic list — e.g. asserting 'a person' or 'a car' for this shape.",
+      "tests": "calibration — does the model express uncertainty on something genuinely unclear, or hallucinate with false confidence"
+    },
+    "background_figure": {
+      "question": "is there a second person in the background",
+      "acceptable": ["no", "not clearly", "cannot tell", "unclear", "there is no other person", "no one else", "just one person", "one person", "ambiguous", "not sure", "possibly", "hard to tell", "there might be"],
+      "acceptable_note": "Saying 'no second person' is correct. Saying 'it is unclear whether there is a second person' is ALSO correct and is scored as a hedge. Asserting a definite second person is a hallucination.",
+      "tests": "hallucination resistance + calibration"
+    }
+  },
+
+  "scoring": {
+    "negative_existence": 0.30,
+    "spatial_trap": 0.25,
+    "small_object": 0.20,
+    "calibration": 0.25
+  },
+
+  "scoring_notes": {
+    "negative_existence": "Asks for counts of things NOT present (red tops, blue tops). The correct answer is ZERO for both. This is the sharpest check: a model that pattern-matches 'light top -> some color' answers 1 and is wrong, and a model that reads the question as presupposing existence will too. Credit is all-or-nothing across both, because '0 and 0' is the only fully correct answer.",
+    "spatial_trap": "Asks about 'the person on the far left'. There is no person there — the horse is on the left, the person is on the right. A model that answers about the person on the right has ignored the spatial qualifier. A model that says 'there is no person on the left' is correct.",
+    "small_object": "The cat is small, in the bottom corner, and partially occluded by the fence. Detecting it is genuine capability, not a freebie. Missing it entirely is the expected failure.",
+    "calibration": "Two background elements are genuinely ambiguous. Correct behaviour is to hedge or list plausible readings; incorrect behaviour is confident fabrication. This is the check the old char-count rubric could not express at all — longer answers scored better, so hedging and detail were rewarded over accuracy."
+  },
+
+  "max_score": 1.0
+}

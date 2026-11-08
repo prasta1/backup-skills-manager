@@ -1,0 +1,9 @@
+{
+  "last_report_path": "/Users/macstudio/.hermes/logs/curator/20260923-211407",
+  "last_run_at": "2026-09-23T21:14:07.764134+00:00",
+  "last_run_duration_seconds": 469.663909,
+  "last_run_summary": "auto: 1 marked stale, 1 archived, 2 reactivated; llm: I stopped retrying because I kept running skill_manage 8 times without making progress. The last result above shows what blocked it. Tell me how you'd like to proceed, or send `continue` and I'll try a different approach.",
+  "last_run_summary_shown_at": "2026-09-23T21:14:07.764134+00:00",
+  "paused": true,
+  "run_count": 3
+}

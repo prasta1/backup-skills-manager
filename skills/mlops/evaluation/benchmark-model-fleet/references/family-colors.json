@@ -1,0 +1,157 @@
+{
+  "_note": "Per-family tag colours for Grist Choice columns. Colours are SAMPLED from each publisher's own logo/avatar where a brand colour exists; 'shifted' means the hue was nudged to keep neighbours tellable; 'assigned' means the publisher's mark is monochrome so there is no brand colour (OpenAI, Nous Research, Liquid AI). See SKILL.md for the method.",
+  "Model_Family": {
+    "bonsai": {
+      "hex": "#4D668C",
+      "text": "#FFFFFF",
+      "provenance": "sampled",
+      "source": "huggingface.co/prism-ml",
+      "sampled_hex": "#4D668C",
+      "why": "brand hue"
+    },
+    "deepseek": {
+      "hex": "#3726EA",
+      "text": "#FFFFFF",
+      "provenance": "shifted",
+      "source": "huggingface.co/deepseek-ai",
+      "sampled_hex": "#2646EA",
+      "why": "hue +15 deg"
+    },
+    "devstral": {
+      "hex": "#EA7323",
+      "text": "#FFFFFF",
+      "provenance": "sampled",
+      "source": "huggingface.co/mistralai",
+      "sampled_hex": "#EA7323",
+      "why": "brand hue"
+    },
+    "gemma": {
+      "hex": "#E93323",
+      "text": "#FFFFFF",
+      "provenance": "sampled",
+      "source": "huggingface.co/google",
+      "sampled_hex": "#E93323",
+      "why": "brand hue"
+    },
+    "glm": {
+      "hex": "#7C3A8C",
+      "text": "#FFFFFF",
+      "provenance": "sampled",
+      "source": "github.com/THUDM",
+      "sampled_hex": "#7C3A8C",
+      "why": "brand hue"
+    },
+    "gpt-oss": {
+      "hex": "#CC5276",
+      "text": "#FFFFFF",
+      "provenance": "assigned",
+      "source": null,
+      "sampled_hex": null,
+      "why": "OpenAI mark is monochrome"
+    },
+    "granite": {
+      "hex": "#1B52B8",
+      "text": "#FFFFFF",
+      "provenance": "sampled",
+      "source": "huggingface.co/ibm-granite",
+      "sampled_hex": "#2369EA",
+      "why": "shade 0.92->0.72 (hue kept)"
+    },
+    "hermes": {
+      "hex": "#7ACC52",
+      "text": "#000000",
+      "provenance": "assigned",
+      "source": null,
+      "sampled_hex": null,
+      "why": "Nous Research mark is monochrome"
+    },
+    "kat": {
+      "hex": "#23BFEA",
+      "text": "#000000",
+      "provenance": "sampled",
+      "source": "huggingface.co/Kwaipilot",
+      "sampled_hex": "#23BFEA",
+      "why": "brand hue"
+    },
+    "lfm": {
+      "hex": "#52CCB4",
+      "text": "#000000",
+      "provenance": "assigned",
+      "source": null,
+      "sampled_hex": null,
+      "why": "Liquid AI mark is monochrome"
+    },
+    "ministral": {
+      "hex": "#EAA823",
+      "text": "#000000",
+      "provenance": "shifted",
+      "source": "huggingface.co/mistralai",
+      "sampled_hex": "#EA7323",
+      "why": "hue +16 deg"
+    },
+    "muse": {
+      "hex": "#2283E3",
+      "text": "#FFFFFF",
+      "provenance": "sampled",
+      "source": "huggingface.co/meta-models",
+      "sampled_hex": "#2283E3",
+      "why": "brand hue"
+    },
+    "nemotron": {
+      "hex": "#84BE1C",
+      "text": "#000000",
+      "provenance": "sampled",
+      "source": "huggingface.co/nvidia",
+      "sampled_hex": "#84BE1C",
+      "why": "brand hue"
+    },
+    "nuextract": {
+      "hex": "#EADE23",
+      "text": "#000000",
+      "provenance": "shifted",
+      "source": "huggingface.co/numind",
+      "sampled_hex": "#EA9F23",
+      "why": "hue +19 deg"
+    },
+    "qwen": {
+      "hex": "#2347E9",
+      "text": "#FFFFFF",
+      "provenance": "sampled",
+      "source": "huggingface.co/Qwen",
+      "sampled_hex": "#2347E9",
+      "why": "brand hue"
+    },
+    "qwopus": {
+      "hex": "#4D8C70",
+      "text": "#FFFFFF",
+      "provenance": "sampled",
+      "source": "huggingface.co/Jackrong",
+      "sampled_hex": "#4D8C70",
+      "why": "brand hue"
+    },
+    "qwythos": {
+      "hex": "#9444E1",
+      "text": "#FFFFFF",
+      "provenance": "sampled",
+      "source": "huggingface.co/empero-ai",
+      "sampled_hex": "#9444E1",
+      "why": "brand hue"
+    },
+    "smollm": {
+      "hex": "#5A2FB8",
+      "text": "#FFFFFF",
+      "provenance": "sampled",
+      "source": "huggingface.co/HuggingFaceTB",
+      "sampled_hex": "#6032C3",
+      "why": "shade 0.76->0.72 (hue kept)"
+    },
+    "trinity": {
+      "hex": "#208C8C",
+      "text": "#FFFFFF",
+      "provenance": "sampled",
+      "source": "arcee.ai favicon",
+      "sampled_hex": "#208C8C",
+      "why": "brand hue"
+    }
+  }
+}

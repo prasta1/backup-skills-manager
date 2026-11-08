@@ -1,0 +1,25 @@
+{
+  "source": "skills-sh/firecrawl/cli/firecrawl",
+  "source_url": "https://github.com/firecrawl/cli/tree/296b5b9766822f0190b769ae085b1fc22c07491e/skills/firecrawl-cli",
+  "bundle_hash": "sha256:197a50e557aefd6001eeeae02071e97d5da6deb96a96876a43493be88553e982",
+  "scanner_version": "skills-guard-v1",
+  "verdict": "safe",
+  "trust_level": "community",
+  "findings": [
+    {
+      "pattern_id": "allowed_tools_field",
+      "severity": "low",
+      "category": "privilege_escalation",
+      "file": "SKILL.md",
+      "line": 5,
+      "match": "allowed-tools:",
+      "description": "skill declares allowed-tools (standard frontmatter; informational)"
+    }
+  ],
+  "rules": [
+    "allowed_tools_field"
+  ],
+  "scanned_at": "2026-08-10T15:13:33.650952+00:00",
+  "summary": "firecrawl-cli: safe \u2014 1 finding(s) in privilege_escalation",
+  "fresh": true
+}

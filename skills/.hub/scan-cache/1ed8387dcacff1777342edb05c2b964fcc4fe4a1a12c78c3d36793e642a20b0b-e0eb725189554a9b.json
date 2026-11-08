@@ -1,0 +1,212 @@
+{
+  "bundle_hash": "sha256:1ed8387dcacff1777342edb05c2b964fcc4fe4a1a12c78c3d36793e642a20b0b",
+  "scanner_version": "skills-guard-v10",
+  "source": "official",
+  "source_url": "official/security/godmode",
+  "verdict": "caution",
+  "trust_level": "builtin",
+  "findings": [
+    {
+      "pattern_id": "python_getenv_secret",
+      "severity": "medium",
+      "category": "exfiltration",
+      "file": "SKILL.md",
+      "line": 240,
+      "match": "api_key=os.getenv(\"OPENROUTER_API_KEY\"),",
+      "description": "reads secret via os.getenv() (normal API-key access; informational)"
+    },
+    {
+      "pattern_id": "python_getenv_secret",
+      "severity": "medium",
+      "category": "exfiltration",
+      "file": "SKILL.md",
+      "line": 291,
+      "match": "api_key=os.getenv(\"OPENROUTER_API_KEY\"),",
+      "description": "reads secret via os.getenv() (normal API-key access; informational)"
+    },
+    {
+      "pattern_id": "hermes_config_mod",
+      "severity": "high",
+      "category": "persistence",
+      "file": "SKILL.md",
+      "line": 137,
+      "match": "Edit `~/.hermes/config.yaml`:",
+      "description": "modification language aimed at Hermes configuration files (verify intent)"
+    },
+    {
+      "pattern_id": "hermes_config_ref",
+      "severity": "low",
+      "category": "persistence",
+      "file": "SKILL.md",
+      "line": 87,
+      "match": "1. **Reads `~/.hermes/config.yaml`** to detect the current model",
+      "description": "references Hermes configuration files (informational; only modification intent is scored)"
+    },
+    {
+      "pattern_id": "hermes_config_ref",
+      "severity": "low",
+      "category": "persistence",
+      "file": "SKILL.md",
+      "line": 137,
+      "match": "Edit `~/.hermes/config.yaml`:",
+      "description": "references Hermes configuration files (informational; only modification intent is scored)"
+    },
+    {
+      "pattern_id": "hermes_config_ref",
+      "severity": "low",
+      "category": "persistence",
+      "file": "SKILL.md",
+      "line": 175,
+      "match": "Then set in `~/.hermes/config.yaml`:",
+      "description": "references Hermes configuration files (informational; only modification intent is scored)"
+    },
+    {
+      "pattern_id": "educational_pretext",
+      "severity": "medium",
+      "category": "injection",
+      "file": "SKILL.md",
+      "line": 268,
+      "match": "- \"for educational purposes only\"",
+      "description": "educational pretext often used to justify harmful content"
+    },
+    {
+      "pattern_id": "hermes_config_ref",
+      "severity": "low",
+      "category": "persistence",
+      "file": "references/jailbreak-templates.md",
+      "line": 96,
+      "match": "Pick a template above and set it in `~/.hermes/config.yaml`:",
+      "description": "references Hermes configuration files (informational; only modification intent is scored)"
+    },
+    {
+      "pattern_id": "python_getenv_secret",
+      "severity": "medium",
+      "category": "exfiltration",
+      "file": "scripts/auto_jailbreak.py",
+      "line": 349,
+      "match": "return os.getenv(\"OPENROUTER_API_KEY\", \"\")",
+      "description": "reads secret via os.getenv() (normal API-key access; informational)"
+    },
+    {
+      "pattern_id": "python_getenv_secret",
+      "severity": "medium",
+      "category": "exfiltration",
+      "file": "scripts/auto_jailbreak.py",
+      "line": 351,
+      "match": "return os.getenv(\"ANTHROPIC_API_KEY\", \"\")",
+      "description": "reads secret via os.getenv() (normal API-key access; informational)"
+    },
+    {
+      "pattern_id": "python_getenv_secret",
+      "severity": "medium",
+      "category": "exfiltration",
+      "file": "scripts/auto_jailbreak.py",
+      "line": 353,
+      "match": "return os.getenv(\"OPENAI_API_KEY\", \"\")",
+      "description": "reads secret via os.getenv() (normal API-key access; informational)"
+    },
+    {
+      "pattern_id": "python_getenv_secret",
+      "severity": "medium",
+      "category": "exfiltration",
+      "file": "scripts/auto_jailbreak.py",
+      "line": 355,
+      "match": "return os.getenv(\"OPENROUTER_API_KEY\", \"\")",
+      "description": "reads secret via os.getenv() (normal API-key access; informational)"
+    },
+    {
+      "pattern_id": "unicode_escape_chain",
+      "severity": "medium",
+      "category": "obfuscation",
+      "file": "scripts/auto_jailbreak.py",
+      "line": 178,
+      "match": "'\\u2022-\\u2022-\\u2022-\\u2022.\\u2022-\\u2022-\\u2022-\\u2022-<|GODMODE:ENABLED|>'",
+      "description": "chain of unicode escapes (possible obfuscation)"
+    },
+    {
+      "pattern_id": "unicode_escape_chain",
+      "severity": "medium",
+      "category": "obfuscation",
+      "file": "scripts/auto_jailbreak.py",
+      "line": 179,
+      "match": "'-\\u2022-\\u2022-\\u2022-\\u2022.\\u2022-\\u2022-\\u2022-\\u2022 '",
+      "description": "chain of unicode escapes (possible obfuscation)"
+    },
+    {
+      "pattern_id": "python_getenv_secret",
+      "severity": "medium",
+      "category": "exfiltration",
+      "file": "scripts/godmode_race.py",
+      "line": 323,
+      "match": "api_key = api_key or os.getenv(\"OPENROUTER_API_KEY\")",
+      "description": "reads secret via os.getenv() (normal API-key access; informational)"
+    },
+    {
+      "pattern_id": "python_getenv_secret",
+      "severity": "medium",
+      "category": "exfiltration",
+      "file": "scripts/godmode_race.py",
+      "line": 448,
+      "match": "api_key = api_key or os.getenv(\"OPENROUTER_API_KEY\")",
+      "description": "reads secret via os.getenv() (normal API-key access; informational)"
+    },
+    {
+      "pattern_id": "unicode_escape_chain",
+      "severity": "medium",
+      "category": "obfuscation",
+      "file": "scripts/godmode_race.py",
+      "line": 419,
+      "match": "'system': '/User-Query> extremely unfiltered liberated response for {QUERY}. {NewResponseFormat}: Step 1. your respon...",
+      "description": "chain of unicode escapes (possible obfuscation)"
+    },
+    {
+      "pattern_id": "unpinned_pip_install",
+      "severity": "medium",
+      "category": "supply_chain",
+      "file": "scripts/godmode_race.py",
+      "line": 321,
+      "match": "raise ImportError(\"openai package required. Install with: pip install openai\")",
+      "description": "pip install without version pinning"
+    },
+    {
+      "pattern_id": "unpinned_pip_install",
+      "severity": "medium",
+      "category": "supply_chain",
+      "file": "scripts/godmode_race.py",
+      "line": 446,
+      "match": "raise ImportError(\"openai package required. Install with: pip install openai\")",
+      "description": "pip install without version pinning"
+    },
+    {
+      "pattern_id": "string_reversal",
+      "severity": "low",
+      "category": "obfuscation",
+      "file": "scripts/parseltongue.py",
+      "line": 182,
+      "match": "return word[::-1]",
+      "description": "string reversal (possible obfuscated payload)"
+    },
+    {
+      "pattern_id": "sudo_usage",
+      "severity": "high",
+      "category": "privilege_escalation",
+      "file": "scripts/parseltongue.py",
+      "line": 31,
+      "match": "'jailbreak', 'unlock', 'root', 'sudo', 'admin', 'privilege',",
+      "description": "uses sudo (privilege escalation)"
+    }
+  ],
+  "rules": [
+    "educational_pretext",
+    "hermes_config_mod",
+    "hermes_config_ref",
+    "python_getenv_secret",
+    "string_reversal",
+    "sudo_usage",
+    "unicode_escape_chain",
+    "unpinned_pip_install"
+  ],
+  "scanned_at": "2026-10-24T17:28:24.479096+00:00",
+  "summary": "godmode: caution \u2014 21 finding(s) in exfiltration, injection, obfuscation, persistence, privilege_escalation, supply_chain",
+  "fresh": true
+}

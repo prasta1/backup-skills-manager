@@ -1,0 +1,34 @@
+# ASD-STE100 Approved Vocabulary
+
+This file contains the core vocabulary structure for Simplified Technical English. The full list contains approximately 2,500 words. Use these as the base for technical documentation.
+
+## General Words (Always Allowed)
+time, date, day, week, month, year, number, name, type, part, item, table, list, figure, page, section, chapter, appendix, index, glossary
+
+## Technical Words (Must Be Defined)
+Use your organization's technical dictionary. All technical terms must be defined before first use.
+
+## Word Classes
+
+### Nouns (Allowed Base Forms)
+action, activity, add, address, adjust, after, alarm, amount, analyze, answer, appearance, apply, approach, area, arrive, arrive at, article, assemble, assist, attach, attack, attempt, avoid, back, bad, balance, base, be (am, are, is, was, were, been, being), become, before, begin, belong, below, bend, between, bit, black, blue, body, book, both, break, bring, broad, brown, build, burn, buyer, calculate, call, carry, case, catch, center, change, choose, climate, close, cold, color, come, comfortable, company, compare, complete, component, component of, compose, concern, consider, contain, continue, contrast, control, convert, cool, core, corner, correct, cost, could, count, course, create, cry, cut, danger, date, day, dealer, decide, deep, define, deliver, demand, deny, depend, describe, design, destroy, detail, develop, die, difference, different, difficult, digital, direction, discover, discuss, do (did, done, doing), document, does, dog, door, double, doubt, down, draw, dress, drink, drive, drop, dry, during, each, early, eat, effect, either, electric, electronic, element, else, employ, empty, enable, end, engine, enough, enter, equal, error, escape, especially, estimate, examine, example, exceed, expect, explain, explode, export, express, extend, external, extract, face, fact, fail, fall, family, father, feature, feed, feel, female, field, fight, fill, find, fine, finger, fire, first, fit, fix, flag, flat, flow, follow, force, form, founder, free, friend, from, front, fuel, full, function, generate, get, give, go (goes, going, went), good, grade, great, group, grow, guarantee, guard, guide, habit, hair, half, happen, happy, harm, hate, have (has, had, having), he (him, his), head, help, hold, hole, home, hope, hour, hurry, hurt, I (me, my, mine), idea, identify, if, illegal, imagine, impact, implement, imply, improve, in, increase, indeed, indicate, industry, influence, inform, initial, initiate, inject, injure, inside, inspect, install, instance, instant, instead, instruct, instrument, interest, into, investigate, involve, iron, item, job, join, judge, just, keep (kept), kill, kind, king, kiss, know (known), lack, lady, large, last, late, later, lead, learn, leave, left, lend, less, let, level, lie (lay, lying), lift, light (lightning), like, limit, link, little, load, locate, lock, long, look, lose, loss, lot, loud, love, low, machine, main, make, male, manage, manner, market, marry, material, math, matter, may, maybe, mean, measure, meet, melt, member, mention, middle, might, mile, military, milk, mind, minute, miss, mistake, mixture, mobile, model, modify, money, monitor, moon, more, morning, most, mother, mount, move, mud, multiply, must, name, nation, natural, nature, near, necessary, neck, need, negative, neighbor, neither, nerve, nest, never, new, next, nice, night, no, noise, none, normal, north, not, note, nothing, now, number, occur, ocean, off, offer, office, often, oil, okay, old, on, only, operate, operation, opinion, opponent, opportunity, opposite, or, order, organization, organize, original, ornament, other, ought, our, ours, out, outside, over, owner, page, pain, paint, pair, paper, parent, park, part, partner, party, pass, path, patient, pay, peace, people, pepper, per, perform, permit, person, physical, pick, picture, piece, place, plan, plant, play, please, point, poison, polish, polish, political, poor, popular, population, position, possible, post, potential, pour, power, practice, prepare, present, press, pressure, pretend, previous, price, print, private, probable, process, produce, profit, produce, program, promise, protect, protest, provide, public, publish, pull, punish, purpose, push, put (puts), quality, question, quick, quiet, quit, read (reads, reading), ready, real, realize, reason, receive, record, recover, red, reduce, refuse, regard, region, regular, reject, relate, relation, relative, relax, remain, remove, remove, remove, repair, repeat, replace, reply, report, represent, representative, request, require, research, reserve, reside, resist, resist, resource, respect, respond, rest, restaurant, result, return, review, review, review, reward, rich, right, ring, rise, river, road, rock, roll, room, round, rule, run, sad, safe, safety, sail, salt, same, sample, satisfy, save, say (says), scale, school, science, score, scratch, sea, search, season, seat, second, second hand, secret, section, secure, see (sees), seed, seem, select, self, sell, send, senior, separate, serve, service, set, set up, settle, seven, several, sew, shade, shake, shape, sharp, sheep, shell, shelf, shine, ship, shirt, shock, shoe, short, should, shoulder, shout, show, shut, side, sign, signal, similar, simple, since, sing, sink, sister, sit, site, six, size, skill, skin, skip, skirt, sky, slave, sleep, slide, small, smell, smile, smoke, smooth, snake, snow, so, soap, soft, software, soil, soldier, solve, some, son, song, sort, soul, sound, sour, south, space, Spanish, speak, special, speed, spell, spend, spin, spirit, split, sport, spot, spray, spread, square, stable, staff, stage, stair, stamp, stand, star, start, state, stay, steal, step, stick, still, stock, stomach, stone, stop, store, storm, story, strange, street, stretch, strong, structure, student, study, stupid, subject, subject to, succeed, success, suffer, sugar, suggest, summer, sun, sunny, super, supply, support, suppose, surprise, surround, survey, survive, suspect, suspect of, suspend, switch, sword, symbol, symptom, system
+
+## Grammar Rules Summary
+
+### One Verb Per Sentence
+Allowed: "Check the pressure. Then open the valve."
+Not allowed: "Check the pressure and open the valve."
+
+### Active Voice
+Allowed: "The operator tests the system."
+Passive: "The system is tested by the operator." (only if actor unknown/unimportant)
+
+### Article Removal Before Technical Nouns
+Allowed: "Remove cover." "Connect cable."
+Not allowed: "Remove the cover." "Connect the cable."
+
+### Present Tense
+Use: "The system operates." Not: "The system operated."
+
+## Implementation Notes
+Apply these rules to all technical documentation. Check each sentence for multiple verbs. Remove articles before technical nouns. Define technical terms on first use.
